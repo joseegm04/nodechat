@@ -1,0 +1,39 @@
+extends layout
+
+block content
+  h1= title
+  h2#numCLientes numero de clientes: 
+  p Welcome to #{title}
+  ul#mensajes 
+
+  div 
+    label Usuario 
+    input#inputUsuario(type='text')
+  p
+  div 
+    label Mensaje 
+    input#inputMensaje(type='text')
+  p 
+  button#btnMensaje(type='button') Enviar
+
+  script(src='/socket.io/socket.io.js')
+  script. 
+    const socket = io(); //lanza la construcción del socket
+    const inputUsuario = document.getElementById('inputUsuario');
+    const inputMensaje = document.getElementById('inputMensaje');
+    const btnEnviar = document.getElementById('btnMensaje');
+    const mensajes = document.getElementById('mensajes');
+    const numClientes = document.getElementById('numClientes')
+
+    socket.on('mensaje_chat', datos =>{
+      const li = document.createElement('li');
+      li.innerText = `${datos.usuario}: ${datos.mensaje}`
+      mensajes.append(li);
+    })
+
+    btnEnviar.addEventListener('click', ()=>{
+      socket.emit('mensaje_chat', {
+        usuario: inputUsuario.value,
+        mensaje: inputMensaje.value
+      })
+    });
